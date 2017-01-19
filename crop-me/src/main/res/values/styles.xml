@@ -1,12 +1,11 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme">
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="MyAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="colorAccent">@color/dark_green</item>
+    <style name="MyAlertDialogStyle">
         <item name="android:textColorPrimary">@color/gray_variant</item>
         <item name="android:background">@color/white</item>
         <item name="android:windowMinWidthMajor">@android:dimen/dialog_min_width_major</item>

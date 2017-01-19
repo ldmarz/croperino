@@ -10,6 +10,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.mikelau.magictoast.MagicToast;
 
@@ -23,14 +24,18 @@ public class Croperino {
     private static String TAG = Croperino.class.getSimpleName();
 
     public static void runCropImage(File file, Activity ctx, boolean isScalable, int aspectX, int aspectY, int color, int bgColor) {
-        Intent intent = new Intent(ctx, CropImage.class);
-        intent.putExtra(CropImage.IMAGE_PATH, file.getPath());
-        intent.putExtra(CropImage.SCALE, isScalable);
-        intent.putExtra(CropImage.ASPECT_X, aspectX);
-        intent.putExtra(CropImage.ASPECT_Y, aspectY);
-        intent.putExtra("color", color);
-        intent.putExtra("bgColor", bgColor);
-        ctx.startActivityForResult(intent, CroperinoConfig.REQUEST_CROP_PHOTO);
+        if (file != null) {
+            Intent intent = new Intent(ctx, CropImage.class);
+            intent.putExtra(CropImage.IMAGE_PATH, file.getPath());
+            intent.putExtra(CropImage.SCALE, isScalable);
+            intent.putExtra(CropImage.ASPECT_X, aspectX);
+            intent.putExtra(CropImage.ASPECT_Y, aspectY);
+            intent.putExtra("color", color);
+            intent.putExtra("bgColor", bgColor);
+            ctx.startActivityForResult(intent, CroperinoConfig.REQUEST_CROP_PHOTO);
+        }else{
+            Log.d("lenin","La imagen es null");
+        }
     }
 
     public static void prepareChooser(final Activity ctx, String message, int color) {
@@ -61,6 +66,18 @@ public class Croperino {
 
                     }
                 });
+    }
+
+    public static  void launchGallery(final Activity ctx){
+        if (CroperinoFileUtil.verifyStoragePermissions(ctx)) {
+            prepareGallery(ctx);
+        }
+    }
+
+    public  static void launchCamera(final Activity ctx){
+        if (CroperinoFileUtil.verifyCameraPermissions(ctx)) {
+            prepareCamera(ctx);
+        }
     }
 
     public static void prepareCamera(Activity ctx) {

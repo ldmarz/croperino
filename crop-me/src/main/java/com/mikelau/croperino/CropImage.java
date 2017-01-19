@@ -41,9 +41,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-
-import com.mikelau.magictoast.MagicToast;
-
+import android.widget.Toast;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -152,7 +150,7 @@ public class CropImage extends MonitoredActivity {
             findViewById(R.id.save).setBackgroundColor(extras.getInt("color"));
             findViewById(R.id.rotateLeft).setBackgroundColor(extras.getInt("color"));
             findViewById(R.id.rotateRight).setBackgroundColor(extras.getInt("color"));
-            findViewById(R.id.rl_main).setBackgroundColor(extras.getInt("color"));
+            //findViewById(R.id.rl_main).setBackgroundColor(extras.getInt("color"));
         }
 
         if(extras.getInt("bgColor") != 0) {
@@ -384,7 +382,7 @@ public class CropImage extends MonitoredActivity {
 
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        MagicToast.showError(CropImage.this, "Cannot access file due to app storage encyption, Please use camera or other apps to open gallery.");
+                        Toast.makeText(CropImage.this, "Cannot access file due to app storage encyption, Please use camera or other apps to open gallery.", Toast.LENGTH_LONG);
                     }
                 });
 
@@ -404,7 +402,7 @@ public class CropImage extends MonitoredActivity {
         } else {
             runOnUiThread(new Runnable() {
                 public void run() {
-                    MagicToast.showError(CropImage.this, "Image URL does not exist please try again.");
+                    Toast.makeText(CropImage.this, "Image URL does not exist please try again.", Toast.LENGTH_LONG);
                 }
             });
         }
@@ -559,7 +557,7 @@ public class CropImage extends MonitoredActivity {
                     }
 
                     if (mNumFaces > 1) {
-                        MagicToast.showInfo(CropImage.this, "Multi face crop help");
+                        Toast.makeText(CropImage.this, "Multi face crop help",Toast.LENGTH_LONG);
                     }
                 }
             });
@@ -591,7 +589,7 @@ public class CropImage extends MonitoredActivity {
         }
 
         if (noStorageText != null) {
-            MagicToast.showError(activity, noStorageText);
+            Toast.makeText(activity, noStorageText,Toast.LENGTH_LONG);
         }
     }
 

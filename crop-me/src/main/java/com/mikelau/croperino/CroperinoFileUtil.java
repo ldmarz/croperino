@@ -13,6 +13,7 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
+import android.widget.Toast;
 
 import com.mikelau.magictoast.MagicToast;
 
@@ -63,10 +64,14 @@ public class CroperinoFileUtil {
 
     public static File newGalleryFile(Intent data, Context ctx) {
         try {
-            mFileTemp = new File(CroperinoFileUtil.getPath(ctx, data.getData()));
+            String path = CroperinoFileUtil.getPath(ctx, data.getData());
+            if (path != null) {
+                mFileTemp = new File(path);
+            }
             return mFileTemp;
         } catch (Exception e) {
-            MagicToast.showError(ctx, "Gallery is empty or access is prohibited by device.");
+
+            Toast.makeText(ctx, e.toString(),Toast.LENGTH_LONG);
             return mFileTemp;
         }
 
@@ -115,7 +120,7 @@ public class CroperinoFileUtil {
 
         final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
                 // ExternalStorageProvider
                 if (isExternalStorageDocument(uri)) {
@@ -162,7 +167,7 @@ public class CroperinoFileUtil {
             } else if ("file".equalsIgnoreCase(uri.getScheme())) {
                 return uri.getPath();
             }
-        }
+       // }
 
         return null;
     }
