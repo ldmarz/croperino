@@ -16,12 +16,15 @@ import com.mikelau.magictoast.MagicToast;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by Mike on 9/15/2016.
  */
 public class Croperino {
     private static String TAG = Croperino.class.getSimpleName();
+    String mCurrentPhotoPath;
 
     public static void runCropImage(File file, Activity ctx, boolean isScalable, int aspectX, int aspectY, int color, int bgColor) {
         if (file != null) {
@@ -30,6 +33,7 @@ public class Croperino {
             intent.putExtra(CropImage.SCALE, isScalable);
             intent.putExtra(CropImage.ASPECT_X, aspectX);
             intent.putExtra(CropImage.ASPECT_Y, aspectY);
+            intent.putExtra(CropImage.OVALO, "si");
             intent.putExtra("color", color);
             intent.putExtra("bgColor", bgColor);
             ctx.startActivityForResult(intent, CroperinoConfig.REQUEST_CROP_PHOTO);
@@ -114,7 +118,7 @@ public class Croperino {
     }
 
     public static void prepareGallery(Activity ctx) {
-        Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         ctx.startActivityForResult(i, CroperinoConfig.REQUEST_PICK_FILE);
     }
 }

@@ -24,9 +24,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Region;
@@ -66,6 +68,7 @@ public class CropImage extends MonitoredActivity {
     public static final String RETURN_DATA = "return-data";
     public static final String RETURN_DATA_AS_BITMAP = "data";
     public static final String ACTION_INLINE_DATA = "inline-data";
+    public static final String OVALO = "ovalo";
 
     private Bitmap.CompressFormat mOutputFormat = Bitmap.CompressFormat.JPEG;
     public static Uri mSaveUri = null;
@@ -78,6 +81,7 @@ public class CropImage extends MonitoredActivity {
     private int mOutputX;
     private int mOutputY;
     private boolean mScale;
+    private boolean ovalo;
     private CropImageView mImageView;
     private ContentResolver mContentResolver;
     private Bitmap mBitmap;
@@ -114,8 +118,12 @@ public class CropImage extends MonitoredActivity {
                 }
 
                 mCircleCrop = true;
-                mAspectX = 1;
-                mAspectY = 1;
+//                mAspectX = 1;
+//                mAspectY = 1;
+            }
+            extras.getString(OVALO);
+            if (extras.getString(OVALO) != null) {
+                ovalo = true;
             }
 
             mImagePath = extras.getString(IMAGE_PATH);
@@ -133,6 +141,7 @@ public class CropImage extends MonitoredActivity {
             } else {
                 throw new IllegalArgumentException("aspect_y must be integer");
             }
+
             mOutputX = extras.getInt(OUTPUT_X);
             mOutputY = extras.getInt(OUTPUT_Y);
             mScale = extras.getBoolean(SCALE, true);
@@ -300,7 +309,7 @@ public class CropImage extends MonitoredActivity {
         try {
 
             croppedImage = Bitmap.createBitmap(width, height,
-                    mCircleCrop ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565);
+                    (mCircleCrop || ovalo ) ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565);
         } catch (Exception e) {
             throw e;
         }
@@ -320,6 +329,26 @@ public class CropImage extends MonitoredActivity {
             Path p = new Path();
             p.addCircle(width / 2F, height / 2F, width / 2F,
                     Path.Direction.CW);
+            c.clipPath(p, Region.Op.DIFFERENCE);
+            c.drawColor(0x00000000, PorterDuff.Mode.CLEAR);
+        }
+
+        if (ovalo){
+            Canvas c = new Canvas(croppedImage);
+            Path p = new Path();
+            Paint paint = new Paint();
+
+            RectF rectF = new RectF(0, 0, croppedImage.getWidth(), croppedImage.getHeight() );
+
+            paint.setAntiAlias(false);
+            paint.setStyle(Paint.Style.STROKE);
+            p.addOval(
+                    rectF,
+                    Path.Direction.CW);
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+            paint.clearShadowLayer();
+            c.drawOval(rectF,paint);
+            paint.clearShadowLayer();
             c.clipPath(p, Region.Op.DIFFERENCE);
             c.drawColor(0x00000000, PorterDuff.Mode.CLEAR);
         }
@@ -470,7 +499,7 @@ public class CropImage extends MonitoredActivity {
             }
 
             hv.setup(mImageMatrix, imageRect, faceRect, mCircleCrop,
-                    mAspectX != 0 && mAspectY != 0);
+                    mAspectX != 0 && mAspectY != 0, ovalo );
 
             mImageView.add(hv);
         }
@@ -502,7 +531,7 @@ public class CropImage extends MonitoredActivity {
 
             RectF cropRect = new RectF(x, y, x + cropWidth, y + cropHeight);
             hv.setup(mImageMatrix, imageRect, cropRect, mCircleCrop,
-                    mAspectX != 0 && mAspectY != 0);
+                    mAspectX != 0 && mAspectY != 0, ovalo);
 
             mImageView.mHighlightViews.clear();
 

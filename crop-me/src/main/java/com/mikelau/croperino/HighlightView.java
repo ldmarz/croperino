@@ -37,6 +37,7 @@ public class HighlightView {
     public static final int GROW_TOP_EDGE = (1 << 3);
     public static final int GROW_BOTTOM_EDGE = (1 << 4);
     public static final int MOVE = (1 << 5);
+    public boolean mOvalo = false;
 
     public HighlightView(View ctx) {
 
@@ -99,6 +100,22 @@ public class HighlightView {
                 canvas.restore();
 
 
+            } else if(mOvalo){
+                canvas.save();
+
+                RectF r = new RectF(mDrawRect.left, mDrawRect.top,
+                        mDrawRect.right, mDrawRect.bottom);
+
+                path.addOval(
+                        r,
+                        Path.Direction.CW);
+                mOutlinePaint.setColor(0xFFEF04D6);
+
+                canvas.clipPath(path, Region.Op.DIFFERENCE);
+                canvas.drawRect(viewDrawingRect,
+                        hasFocus() ? mFocusPaint : mNoFocusPaint);
+
+                canvas.restore();
             } else {
 
                 Rect topRect = new Rect(viewDrawingRect.left, viewDrawingRect.top, viewDrawingRect.right, mDrawRect.top);
@@ -384,6 +401,12 @@ public class HighlightView {
                 (int) mCropRect.right, (int) mCropRect.bottom);
     }
 
+    public RectF getCropRectF() {
+
+        return new RectF(mCropRect.left, mCropRect.top,
+                mCropRect.right, mCropRect.bottom);
+    }
+
     // Maps the cropping rectangle from image space to screen space.
     private Rect computeLayout() {
 
@@ -400,11 +423,18 @@ public class HighlightView {
     }
 
     public void setup(Matrix m, Rect imageRect, RectF cropRect, boolean circle,
-                      boolean maintainAspectRatio) {
+                      boolean maintainAspectRatio, boolean ovalo) {
 
-        if (circle) {
+        if (circle || ovalo) {
             maintainAspectRatio = true;
         }
+
+        if (!ovalo) {
+            mOvalo = false;
+        }else{
+            mOvalo = ovalo;
+        }
+
         mMatrix = new Matrix(m);
 
         mCropRect = cropRect;

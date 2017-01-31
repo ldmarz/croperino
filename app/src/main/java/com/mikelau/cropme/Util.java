@@ -38,8 +38,8 @@ public class Util {
         jsonArray.put(json_object);
 
 
-        Native.instance.setPluginData(byteArray);
-        Native.sendMessage(METHOD_CALLBACK_UNITY,"imagen_cargada");
+//        Native.instance.setPluginData(byteArray);
+  //      Native.sendMessage(METHOD_CALLBACK_UNITY,"imagen_cargada");
 
 
     }
@@ -47,26 +47,11 @@ public class Util {
     public static Bitmap decodeSampledBitmapFromFile(String path) {
 
         final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(path, options);
+        //options.inJustDecodeBounds = true;
+        Bitmap bm = BitmapFactory.decodeFile(path, options);
 
-//        final int height = options.outHeight;
-//        final int width = options.outWidth;
-//        options.inPreferredConfig = Bitmap.Config.RGB_565;
-//        int inSampleSize = 1;
-//        if (height > reqHeight) {
-//            inSampleSize = Math.round((float) height / (float) reqHeight);
-//        }
-//
-//        int expectedWidth = width / inSampleSize;
-//        if (expectedWidth > reqWidth) {
-//
-//
-//            inSampleSize = Math.round((float) width / (float) reqWidth);
-//        }
-//
-//        options.inSampleSize = inSampleSize;
-//        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeFile(path, options);
+        Bitmap resized = Bitmap.createScaledBitmap(bm, 500, 500, true);
+
+        return bm;
     }
 }

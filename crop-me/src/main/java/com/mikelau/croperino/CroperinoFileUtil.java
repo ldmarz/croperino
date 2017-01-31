@@ -18,7 +18,11 @@ import android.widget.Toast;
 import com.mikelau.magictoast.MagicToast;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * Created by Mike on 9/15/2016.
@@ -66,7 +70,11 @@ public class CroperinoFileUtil {
         try {
             String path = CroperinoFileUtil.getPath(ctx, data.getData());
             if (path != null) {
-                mFileTemp = new File(path);
+                File dest = new File(ctx.getFilesDir(), CroperinoConfig.getsImageName());
+                File src = new  File(path);
+                CroperinoFileUtil.copy(src, dest); ;
+                mFileTemp = dest;
+
             }
             return mFileTemp;
         } catch (Exception e) {
@@ -74,6 +82,21 @@ public class CroperinoFileUtil {
             Toast.makeText(ctx, e.toString(),Toast.LENGTH_LONG);
             return mFileTemp;
         }
+
+    }
+
+    public static void copy( File src, File dst) throws IOException {
+        InputStream in = new FileInputStream(src);
+        OutputStream out = new FileOutputStream(dst );
+
+        // Transfer bytes from in to out
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) > 0) {
+            out.write(buf, 0, len);
+        }
+        in.close();
+        out.close();
 
     }
 

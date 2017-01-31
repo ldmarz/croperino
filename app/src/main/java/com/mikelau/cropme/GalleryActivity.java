@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Debug;
@@ -31,7 +32,22 @@ public class GalleryActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        openGallery();
+        setContentView(R.layout.galeria_prueba);
+
+
+        new CroperinoConfig("IMG_" + System.currentTimeMillis() + ".jpg", "/Imfree/Pictures", "/sdcard/Imfree/Pictures");
+        CroperinoFileUtil.verifyStoragePermissions(GalleryActivity.this);
+        CroperinoFileUtil.setupDirectory(GalleryActivity.this);
+
+        Button but = (Button) findViewById(R.id.button);
+
+        but.setOnClickListener(new Button.OnClickListener(){
+            public void onClick(View v){
+                openGallery();
+            }
+        });
+
+//        openGallery();
     }
 
     public void openGallery(){
@@ -40,61 +56,43 @@ public class GalleryActivity extends Activity {
         }
     }
 
-
-    private void prepareCamera() {
-        Croperino.prepareCamera(GalleryActivity.this);
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("lenin", "asdlkalsdklasdkalskdalskd");
         switch (requestCode) {
             case CroperinoConfig.REQUEST_PICK_FILE:
                 if (resultCode == Activity.RESULT_OK) {
                     Log.d("lenin", String.valueOf(data));
-                    Uri uri = data.getData();
 
                     CroperinoFileUtil.newGalleryFile(data, GalleryActivity.this);
-                    Log.d("lenin",String.valueOf(CroperinoFileUtil.getmFileTemp()));
 
-                    Croperino.runCropImage(CroperinoFileUtil.getmFileTemp(), GalleryActivity.this, true, 1, 1, 0, 0);
+                    Croperino.runCropImage(CroperinoFileUtil.getmFileTemp(), GalleryActivity.this, true, 70, 100, 0, 0);
 //
-                }else{
-                    Log.d("lenin", "no fue ok");
+                }else if(resultCode == Activity.RESULT_CANCELED){
+                    Native.instance.backToUnity(this);
                 }
                 break;
-                case CroperinoConfig.REQUEST_CROP_PHOTO:
-                    if (resultCode == Activity.RESULT_OK && null != data) {
-                    Log.d("lenin","result del cut");
-                    Log.d("lenin","result data:" + data);
+            case CroperinoConfig.REQUEST_CROP_PHOTO:
+                if (resultCode == Activity.RESULT_OK && null != data) {
                     Uri uri = Uri.fromFile(CroperinoFileUtil.getmFileTemp());
-                    Log.d("lenin", String.valueOf(uri));
 
-                    Log.d("lenin", "uri: "+ String.valueOf(uri));
-                    String[] projection  = {MediaStore.Images.Media.DATA};
-                    Log.d("lenin", "proj" + String.valueOf(projection));
-
-                    Cursor cursor  = getContentResolver().query(uri,projection,null, null, null);
-                    Log.d("lenin", "cursor" + String.valueOf(cursor));
-                    cursor.moveToFirst();
-                    int columnIndex = cursor.getColumnIndex(projection[0]);
-                    Log.d("lenin", "columnIndex" + String.valueOf(columnIndex));
-                    String picturePath = cursor.getString(columnIndex); // returns null
-
-                    Log.d("lenin", "picturepath" + String.valueOf(picturePath));
+                    String picturePath = CroperinoFileUtil.getPath(GalleryActivity.this,uri);
 
                     Bitmap bm = Util.decodeSampledBitmapFromFile(picturePath);
-                    Util.generarImagen(bm);
-                    cursor.close();
 
-                    Native.sendMessage("pickDone", "");
-                    Native.instance.backToUnity(this);
+                    //Util.generarImagen(bm);
 
-                        //Do saving / uploading of photo method here.
-                        //The image file can always be retrieved via CroperinoFileUtil.getmFileTemp()
-                    }
+                    ImageView iv = (ImageView) findViewById(R.id.imageView);
+                    iv.setImageBitmap(bm);
+
+  //                  Native.instance.backToUnity(this);
+                }else if(resultCode == Activity.RESULT_CANCELED){
+//                    Native.instance.backToUnity(this);
+                }
                 break;
+            default:
+    //            Native.instance.backToUnity(this);
+            break;
         }
     }
 
@@ -102,18 +100,7 @@ public class GalleryActivity extends Activity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == CroperinoFileUtil.REQUEST_CAMERA) {
-            for (int i = 0; i < permissions.length; i++) {
-                String permission = permissions[i];
-                int grantResult = grantResults[i];
-
-                if (permission.equals(Manifest.permission.CAMERA)) {
-                    if (grantResult == PackageManager.PERMISSION_GRANTED) {
-                        prepareCamera();
-                    }
-                }
-            }
-        } else if (requestCode == CroperinoFileUtil.REQUEST_EXTERNAL_STORAGE) {
+         if (requestCode == CroperinoFileUtil.REQUEST_EXTERNAL_STORAGE) {
             boolean wasReadGranted = false;
             boolean wasWriteGranted = false;
 
