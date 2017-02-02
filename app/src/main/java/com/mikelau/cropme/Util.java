@@ -23,7 +23,7 @@ public class Util {
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         if (bm != null)
-            bm.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            bm.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] byteArray = stream.toByteArray();
 
         JSONObject json_object = new JSONObject();
@@ -38,8 +38,8 @@ public class Util {
         jsonArray.put(json_object);
 
 
-//        Native.instance.setPluginData(byteArray);
-  //      Native.sendMessage(METHOD_CALLBACK_UNITY,"imagen_cargada");
+        Native.instance.setPluginData(byteArray);
+        Native.sendMessage(METHOD_CALLBACK_UNITY,"imagen_cargada");
 
 
     }
@@ -47,11 +47,12 @@ public class Util {
     public static Bitmap decodeSampledBitmapFromFile(String path) {
 
         final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         //options.inJustDecodeBounds = true;
         Bitmap bm = BitmapFactory.decodeFile(path, options);
 
-        Bitmap resized = Bitmap.createScaledBitmap(bm, 500, 500, true);
+        Bitmap resized = Bitmap.createScaledBitmap(bm, 420, 600, true);
 
-        return bm;
+        return resized;
     }
 }

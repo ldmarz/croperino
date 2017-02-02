@@ -2,16 +2,12 @@ package com.mikelau.cropme;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -19,11 +15,6 @@ import com.mikelau.croperino.Croperino;
 import com.mikelau.croperino.CroperinoConfig;
 import com.mikelau.croperino.CroperinoFileUtil;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 
 public class CameraActivity extends Activity {
 
@@ -39,17 +30,17 @@ public class CameraActivity extends Activity {
         CroperinoFileUtil.verifyStoragePermissions(CameraActivity.this);
         CroperinoFileUtil.setupDirectory(CameraActivity.this);
 
-        setContentView(R.layout.galeria_prueba);
+//        setContentView(R.layout.galeria_prueba);
 
-        Button but = (Button) findViewById(R.id.button);
+//        Button but = (Button) findViewById(R.id.button);
+//
+//        but.setOnClickListener(new Button.OnClickListener(){
+//            public void onClick(View v){
+//                openCamera();
+//            }
+//        });
 
-        but.setOnClickListener(new Button.OnClickListener(){
-            public void onClick(View v){
-                openCamera();
-            }
-        });
-
-        //openCamera();
+        openCamera();
     }
 
     public void openCamera(){
@@ -75,7 +66,7 @@ public class CameraActivity extends Activity {
 
 
                 }else if(resultCode == Activity.RESULT_CANCELED){
-                    //Native.instance.backToUnity(this);
+                    Native.instance.backToUnity(this);
                 }
                 break;
             case CroperinoConfig.REQUEST_CROP_PHOTO:
@@ -86,38 +77,22 @@ public class CameraActivity extends Activity {
 
                     Bitmap bm = Util.decodeSampledBitmapFromFile(picturePath);
 
-                    ImageView iv = (ImageView) findViewById(R.id.imageView);
-                    iv.setImageBitmap(bm);
+//                    ImageView iv = (ImageView) findViewById(R.id.imageView);
+//                    iv.setImageBitmap(bm);
 
                     Util.generarImagen(bm);
-                    //Native.instance.backToUnity(this);
+                    Native.instance.backToUnity(this);
                 }else if(resultCode == Activity.RESULT_CANCELED){
-                    //Native.instance.backToUnity(this);
+                    Native.instance.backToUnity(this);
                 }
                 break;
             default:
-                //Native.instance.backToUnity(this);
+                Native.instance.backToUnity(this);
                 break;
         }
     }
 
 
-    private File persistImage(Context ctx, Bitmap bitmap) {
-        File filesDir = ctx.getFilesDir();
-        File imageFile = new File(CroperinoConfig.getsDirectory() + CroperinoConfig.getsImageName());
-
-        OutputStream os;
-        try {
-            os = new FileOutputStream(imageFile);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
-            os.flush();
-            os.close();
-
-        } catch (Exception e) {
-            Log.e("Error writing bitmap", e.toString());
-        }
-        return imageFile;
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

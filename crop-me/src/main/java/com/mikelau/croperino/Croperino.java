@@ -105,13 +105,13 @@ public class Croperino {
             ctx.startActivityForResult(intent, CroperinoConfig.REQUEST_TAKE_PHOTO);
         } catch (Exception e) {
             if (e instanceof ActivityNotFoundException) {
-                MagicToast.showError(ctx, "Activity not found.");
+                Toast.makeText(ctx, "Activity not found.", Toast.LENGTH_LONG);
             } else if (e instanceof IOException) {
-                MagicToast.showError(ctx, "Image file captured not found.");
+                Toast.makeText(ctx, "Cannot create file", Toast.LENGTH_LONG);
             } else if (e instanceof CameraAccessException) {
-                MagicToast.showError(ctx, "Camera access was denied.");
+                Toast.makeText(ctx, "Camera access was denied.", Toast.LENGTH_LONG);
             } else {
-                MagicToast.showError(ctx, "Camera access failed.");
+                Toast.makeText(ctx, "Camera access failed.", Toast.LENGTH_LONG);
             }
             Log.e(TAG, "Failed to prepare camera: ", e);
         }

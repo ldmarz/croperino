@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -70,7 +71,7 @@ public class CropImage extends MonitoredActivity {
     public static final String ACTION_INLINE_DATA = "inline-data";
     public static final String OVALO = "ovalo";
 
-    private Bitmap.CompressFormat mOutputFormat = Bitmap.CompressFormat.JPEG;
+    private Bitmap.CompressFormat mOutputFormat = Bitmap.CompressFormat.PNG;
     public static Uri mSaveUri = null;
     private boolean mDoFaceDetection = true;
     private boolean mCircleCrop = false;
@@ -350,7 +351,7 @@ public class CropImage extends MonitoredActivity {
             c.drawOval(rectF,paint);
             paint.clearShadowLayer();
             c.clipPath(p, Region.Op.DIFFERENCE);
-            c.drawColor(0x00000000, PorterDuff.Mode.CLEAR);
+            c.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
         }
 
         if (mOutputX != 0 && mOutputY != 0) {
